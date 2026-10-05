@@ -111,5 +111,30 @@ internal class Product
         }
     }
     //skrócona wersja gettera: =>
-    public string FullInfo2 => $"Id: {Id}, Name: \"{Name}\", {{Production Date: {_productionDate}, Expiration Date: {_expirationDate}}}, Description: {Description}";
+    public string FullInfo2 => $"Id: {Id}, Name: \"{Name}\", Price: {Price}, {{Production Date: {_productionDate}, Expiration Date: {_expirationDate}}}, Description: {Description}";
+
+    public float Price { get; set; }
+
+    //przeciążenie operatora + - pozwala na dodawanie dwóch obiektów klasy Product - w tym przypadku robiony jest zestaw z 2 produków
+    //przeciążenie wymaga zdefiniowania metody statycznej, która przyjmuje dwa parametry (lewa i prawa strona operatora) oraz słowa kluczowego "operator"
+    //możemy przeciążać operatory, które są zdefiniowane w C# (np. +, -, *, /, ==, !=, <, >, <=, >=)
+    public static Product operator +(Product left, Product right)
+    {
+        Product result = new Product();
+        result.Name = left.Name + " & " + right.Name;
+        result.ExpirationDate = left.ExpirationDate < right.ExpirationDate ? left.ExpirationDate : right.ExpirationDate;
+
+        return result;
+    }
+
+    public static Product operator +(Product left, float right)
+    {
+        left.Price += right;
+        return left;
+    }
+    public static Product operator -(Product left, float right)
+    {
+        left.Price += right;
+        return left;
+    }
 }

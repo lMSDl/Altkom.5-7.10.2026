@@ -57,3 +57,26 @@ Product product3 = new Product("Tablet", new DateTime(2030, 1, 1));
 //Inicjalizator obiektów ""uruchamiamy" za pomocą nawiasów klamrowych {} po wywołaniu konstruktora.
 Product prodcut4 = new Product() { Id = 4, Name = "Monitor", Description = "Monitor 4K" };
 Product product5 = new Product("Tablet", new DateTime(2030, 1, 1)) { Description = "Tablet 4K" };
+
+
+Console.WriteLine(1 + 1); //2
+Console.WriteLine("1" + 1); //"11" - operator + jest przeciążony dla stringów, więc jeśli jeden z operandów jest stringiem, to drugi operand jest konwertowany na string i następuje konkatenacja stringów
+Console.WriteLine(1 + "1"); //"11" - jak wyżej
+Console.WriteLine("1" + 1 + 1); //"111" - operator + jest lewostronny, więc najpierw następuje konkatenacja "1" + 1 = "11", a następnie "11" + 1 = "111"
+Console.WriteLine(1 + 1 + "1"); //"21" - operator + jest lewostronny, więc najpierw następuje dodawanie 1 + 1 = 2, a następnie 2 + "1" = "21"
+
+
+Product bundle = product2 + product3;
+Console.WriteLine(bundle.FullInfo);
+
+
+Console.WriteLine(bundle.FullInfo2);
+bundle.Price = 150;
+Console.WriteLine(bundle.FullInfo2);
+bundle = bundle + 50;
+Console.WriteLine(bundle.FullInfo2);
+//-= - zapis równoważny dla: bundle = bundle - 30;
+bundle -= 30;
+Console.WriteLine(bundle.FullInfo2);
+bundle = bundle - 30 + 23 - 11 + 22;
+Console.WriteLine(bundle.FullInfo2);
