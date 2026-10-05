@@ -80,3 +80,19 @@ bundle -= 30;
 Console.WriteLine(bundle.FullInfo2);
 bundle = bundle - 30 + 23 - 11 + 22;
 Console.WriteLine(bundle.FullInfo2);
+
+
+int[] ints = { 1, 2, 3, 4, 5 };
+List<string> strings = new List<string> { "Ala", "ma", "kota" };
+
+Console.WriteLine(ints[2]);
+Console.WriteLine(strings[1]);
+
+Console.WriteLine(bundle[1]);
+Console.WriteLine(bundle[2]);
+
+bundle[2] = "123";
+Console.WriteLine(bundle[2]);
+Console.WriteLine(bundle.FullInfo2);
+
+Console.WriteLine(bundle["NaMe"]);
