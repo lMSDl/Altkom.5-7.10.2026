@@ -18,53 +18,27 @@
 //Kompilator automatycznie generuje klasę i metodę Main, która jest punktem wejścia do programu.
 //Dzięki temu kod staje się bardziej zwięzły i czytelny, zwłaszcza dla prostych programów.
 //Wszystko co znajduje się w pliku z top-level statements jest otoczone metodą Main
+using ConsoleApp;
 using ConsoleApp.Models;
 
-Console.WriteLine("Hello, World!");
-alamakota();
+Console.WriteLine(typeof(Product).Name);
+Console.WriteLine(typeof(Product).Namespace);
+Console.WriteLine(typeof(Product).FullName);
 
-void alamakota(){
-    int a = 3;
-    int b = 4;
-}
+/*Introduction introduction = new Introduction();
+introduction.Run();*/
+Introduction.Run();
 
-//Nullable - typy wartościowe, które mogą przyjmować wartość null.
-//Tworzy w pamięci parę: wartość i flagę, która informuje czy wartość jest ustawiona.
-//Wartość null oznacza brak wartości. Nullable jest przydatny w sytuacjach, gdy chcemy reprezentować brak wartości dla typów wartościowych, takich jak int, double, bool itp.
-//W C# można użyć Nullable<T> lub skróconej wersji T?, gdzie T jest typem wartościowym.
-Nullable<int> a = null;
-int? b = null; //skrócona wersja Nullable<int>
+//wytworzenie obiektu klasy Product - instancja klasy Product
+Product product = new Product();
 
-Product product1 = new Product
-{
-    Id = 1,
-    Name = "Laptop"
-};
+product.Name = "Laptop";
+product.Description = "Laptop popsuty z procesorem Intel i7";
+product.SetProductionDate(new DateTime(2023, 1, 1));
+product.ExpirationDate = new DateTime(2025, 1, 1);
 
-a = 5;
-ChangeInt(a.Value);
-Console.WriteLine(a);
+Console.WriteLine(product.FullInfo);
 
-ChangeProduct(product1);
+product.Description = "Laptop naprawiony z procesorem Intel i9";
 
-
-
-Product? product2 = null;
-ChangeProduct(product2);
-
-
-string str1 = "ala ma kota";
-string str2 = null;
-
-void ChangeProduct(Product? product)
-{
-    if (product != null)
-    {
-        product.Name = "Komputer";
-    }
-}
-
-void ChangeInt(int number)
-{
-    number = 10;
-}
+Console.WriteLine(product.FullInfo);
