@@ -12,7 +12,6 @@
     }
 }*/
 
-
 //nowy szablon aplikacji konsolowej w C#
 //instrukcje najwyższego poziomu - top-level statements
 //są to instrukcje, które można umieścić bezpośrednio w pliku, bez konieczności definiowania klasy i metody Main.
