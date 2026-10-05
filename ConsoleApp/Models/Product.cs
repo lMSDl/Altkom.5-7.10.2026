@@ -78,7 +78,7 @@ internal class Product
     //integruje w sobie pole + metody dostępowe
     public string Name { get; set; }
     //jest możliwoć zmiany modyfikatora dla getter i setter
-    public int Id { get; private set; }
+    public int Id { get; internal set; }
 
     //full-property
     private DateTime _expirationDate; //backing field - pole, które przechowuje wartość właściwości

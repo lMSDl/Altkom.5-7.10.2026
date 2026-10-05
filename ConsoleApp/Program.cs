@@ -50,3 +50,10 @@ Console.WriteLine(product1.FullInfo);
 Console.WriteLine(product2.FullInfo);
 
 Product product3 = new Product("Tablet", new DateTime(2030, 1, 1));
+
+
+//inicjalizator obiektów - pozwala na przypisanie wartości do właściwości obiektu w momencie jego tworzenia, bez konieczności wywoływania konstruktora z parametrami.
+//Inicjalizator obiektów jest szczególnie przydatny, gdy chcemy szybko utworzyć obiekt i przypisać mu wartości właściwości, co poprawia czytelność kodu i zmniejsza ilość kodu potrzebnego do inicjalizacji obiektu.
+//Inicjalizator obiektów ""uruchamiamy" za pomocą nawiasów klamrowych {} po wywołaniu konstruktora.
+Product prodcut4 = new Product() { Id = 4, Name = "Monitor", Description = "Monitor 4K" };
+Product product5 = new Product("Tablet", new DateTime(2030, 1, 1)) { Description = "Tablet 4K" };
