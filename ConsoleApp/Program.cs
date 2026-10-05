@@ -42,3 +42,11 @@ Console.WriteLine(product.FullInfo);
 product.Description = "Laptop naprawiony z procesorem Intel i9";
 
 Console.WriteLine(product.FullInfo);
+
+Product product1 = new Product();
+Product product2 = new Product("Smartphone");
+
+Console.WriteLine(product1.FullInfo);
+Console.WriteLine(product2.FullInfo);
+
+Product product3 = new Product("Tablet", new DateTime(2030, 1, 1));
