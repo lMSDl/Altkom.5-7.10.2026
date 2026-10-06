@@ -1,8 +1,6 @@
 ﻿using Models;
 using Services.InMemory;
 using Services.Interfaces;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.InteropServices;
 
 IProductsService service = new ProductsService();
 
@@ -57,19 +55,19 @@ void Edit()
 {
     int id = ReadInt("Id");
     Product? entity = service.Read(id);
-    if(entity == null)
+    if (entity == null)
     {
         Console.WriteLine("Id not found");
         return;
     }
 
-    entity = new Product();
+    Product product = new Product();
 
-    entity.Name = ReadString("Name");
-    entity.Price = ReadFloat("Price");
-    entity.CreatedAt = ReadDate("Created at");
+    product.Name = ReadString($"Name ({entity.Name})", entity.Name);
+    product.Price = ReadFloat($"Price ({entity.Price})", entity.Price);
+    product.CreatedAt = ReadDate($"Created at ({entity.CreatedAt})", entity.CreatedAt);
 
-    service.Update(id, entity);
+    service.Update(id, product);
 }
 
 void Create()
@@ -100,22 +98,36 @@ void Delete()
     {
         id = -1;
     }
-    
-    if(!service.Delete(id))
+
+    if (!service.Delete(id))
     {
         Console.WriteLine("Id not found");
     }
 }
 
-string ReadString(string label)
+/*string ReadString(string label)
 {
     Console.Write($"{label}: ");
     return Console.ReadLine()!;
+}*/
+
+//@ - pozwala używać słów kluczowych jako nazw zmiennych, parametrów itp. - przydatne gdy chcemy zachować czytelność kodu i użyć słowa kluczowego jako nazwy
+//parametr opcjonalny - pozwala na pominięcie argumentu przy wywołaniu funkcji, jeśli nie chcemy go podawać. Musimy podać wartość domyślną dla parametru opcjonalnego.
+//W tym przypadku, jeśli nie podamy wartości dla parametru @default, to zostanie użyta wartość domyślna "" (pusty string)
+string ReadString(string label, string @default = "")
+{
+    Console.Write($"{label}: ");
+    string input = Console.ReadLine()!;
+    if (string.IsNullOrWhiteSpace(input))
+    {
+        return @default;
+    }
+    return input;
 }
 
-DateTime ReadDate(string label)
+DateTime ReadDate(string label, DateTime? @default = null)
 {
-    string input = ReadString(label);
+    string input = ReadString(label, @default?.ToString() ?? "");
     DateTime dateTime;
 
     try
@@ -161,35 +173,34 @@ int ReadInt(string label)
     //out - oznacza, że parametr jest przekazywany przez referencję i może być modyfikowany w funkcji
     bool success = int.TryParse(input, out result);
 
-    if(success)
+    if (success)
         return result;
 
     Console.WriteLine("Invalid number format");
     return ReadInt(label);
 }
 
-float ReadFloat(string label)
+float ReadFloat(string label, float @default = 0)
 {
+    string input = ReadString(label, @default.ToString());
     float result;
-    if(!TryReadFloat(label, out result))
+    if (!TryReadFloat(input, out result))
     {
-        return ReadFloat(label);
+        return ReadFloat(label, @default);
     }
     return result;
 }
 
 //własna implementacja TryPattern - pozwala na obsługę wyjątków w bardziej elegancki sposób
 //zgodnie ze wzorcem funkcja zwraca bool, a wynik konwersji jest zwracany przez parametr out
-bool TryReadFloat(string label, out float result)
+bool TryReadFloat(string input, out float result)
 {
-    string input = ReadString(label);
-
     try
     {
         result = float.Parse(input);
         return true;
     }
-    catch 
+    catch
     {
         Console.WriteLine("Invalid number format");
         result = default;
