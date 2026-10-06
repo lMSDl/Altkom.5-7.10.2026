@@ -24,12 +24,15 @@ do
     }
 
     Console.WriteLine();
-    Console.WriteLine("Commands: exit");
+    Console.WriteLine("Commands: delete, exit");
 
     string input = Console.ReadLine()!; // ! - operator null-forgiving, mówi kompilatorowi, że nie spodziewamy się tu mimo wszystko nulla
 
     switch (input.ToLower())
     {
+        case "delete":
+            Delete();
+            break;
         case "exit":
             exit = true;
             break;
@@ -41,3 +44,29 @@ do
     Console.WriteLine("Press any key to continue...");
     Console.ReadKey();
 } while (!exit);
+
+
+
+void Delete()
+{
+    Console.Write("Id: ");
+    string input = Console.ReadLine()!;
+    int id;
+
+    //try-catch - służy do obsługi wyjątków
+    //w bloku try umieszczamy kod, który może rzucić wyjątek
+    try
+    {
+        id = int.Parse(input);
+    }
+    //catch (bez parametrów) - przechwytujemy wszystkie wyjątki i nie dostajemy informacji jaki to wyjątek
+    catch
+    {
+        id = -1;
+    }
+    
+    if(!service.Delete(id))
+    {
+        Console.WriteLine("Id not found");
+    }
+}
