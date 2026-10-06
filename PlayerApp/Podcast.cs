@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PlayerApp
+﻿namespace PlayerApp
 {
-    internal class Podcast : IPlayable
+    internal class Podcast : MediaItem
     {
-        public string Title { get; }
         public int EpisodeNumber { get; }
-        public Podcast(string title, int episodeNumber)
+        public Podcast(string title, int episodeNumber, int durationInSeconds) : base(title, durationInSeconds)
         {
-            Title = title;
             EpisodeNumber = episodeNumber;
         }
-        public void Pause()
+
+        public override void Play()
         {
-            Console.WriteLine($"Pausing podcast: {Title} Episode {EpisodeNumber}");
-        }
-        public void Play()
-        {
-            Console.WriteLine($"Playing podcast: {Title} Episode {EpisodeNumber}");
+            Console.WriteLine($"Playing podcast: {Title} Episode {EpisodeNumber} ({DurationInSeconds} seconds)");
         }
     }
 }

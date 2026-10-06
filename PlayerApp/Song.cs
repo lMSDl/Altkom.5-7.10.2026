@@ -1,24 +1,23 @@
 ﻿namespace PlayerApp
 {
-    internal class Song : IPlayable
+    internal class Song : MediaItem
     {
-        public string Title { get; }
+        
         public string Artist { get; }
 
-        public Song(string title, string artist)
+        public Song(string title, string artist, int durationInSeconds) : base(title, durationInSeconds)
         {
-            Title = title;
             Artist = artist;
         }
 
-        public void Pause()
+        public override void Pause()
         {
-            Console.WriteLine($"Pausing song: {Title} by {Artist}");
+            Console.WriteLine($"Pausing song: {Title} by {Artist} ({DurationInSeconds} seconds)");
         }
 
-        public void Play()
+        public override void Play()
         {
-            Console.WriteLine($"Playing song: {Title} by {Artist}");
+            Console.WriteLine($"Playing song: {Title} by {Artist} ({DurationInSeconds} seconds)");
         }
     }
 }
