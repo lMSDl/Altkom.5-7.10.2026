@@ -2,26 +2,16 @@
 
 namespace ItemsManager
 {
-    internal class PersonManager : EntityManager
+    internal class PersonManager : EntityManager<Person>
     {
-        protected override Entity CreateEntity()
+        protected override void ExtraCreate(Person entity)
         {
-            return new Person();
+            entity.BirthDate = ReadDate("Birth date");
         }
 
-        protected override void ExtraCreate(Entity entity)
+        protected override void ExtraEdit(Person current, Person edited)
         {
-            Person person = (Person)entity;
-
-            person.BirthDate = ReadDate("Birth date");
-        }
-
-        protected override void ExtraEdit(Entity current, Entity edited)
-        {
-            Person currentPerson = (Person)current;
-            Person editedPerson = (Person)edited;
-
-            editedPerson.BirthDate = ReadDate($"Birth date ({currentPerson.BirthDate})", currentPerson.BirthDate);
+            edited.BirthDate = ReadDate($"Birth date ({current.BirthDate})", current.BirthDate);
         }
     }
 }

@@ -4,7 +4,11 @@ using Services.Interfaces;
 
 namespace ItemsManager
 {
-    internal abstract class EntityManager
+    // <T> - parametr generyczny, który pozwala na tworzenie klas, metod i interfejsów, które mogą działać z różnymi typami danych.
+    //      Dzięki temu możemy tworzyć bardziej elastyczne i wielokrotnego użytku komponenty, które mogą być używane z różnymi typami danych bez konieczności duplikowania kodu.
+    // where T : - ograniczenie generyczne, które określa, że typ T musi dziedziczyć po klasie Entity.
+    //      Oznacza to, że możemy używać tylko tych typów danych, które są klasami dziedziczącymi po Entity, co pozwala na korzystanie z właściwości i metod zdefiniowanych w klasie Entity w naszej klasie EntityManager.
+    internal abstract class EntityManager<T> where T : Entity
     {
         protected IEntityService _service = new EntityService();
 
@@ -52,25 +56,25 @@ namespace ItemsManager
         void Edit()
         {
             int id = ReadInt("Id");
-            Entity? entity = _service.Read(id);
+            T? entity = (T?)_service.Read(id);
             if (entity == null)
             {
                 Console.WriteLine("Id not found");
                 return;
             }
 
-            Entity newEntity = CreateEntity();
+            T newEntity = Activator.CreateInstance<T>();
 
             newEntity.Name = ReadString($"Name ({entity.Name})", entity.Name);
             ExtraEdit(entity, newEntity);
 
             _service.Update(id, newEntity);
         }
-        protected abstract void ExtraEdit(Entity current, Entity edited);
+        protected abstract void ExtraEdit(T current, T edited);
 
         void Create()
         {
-            Entity entity = CreateEntity();
+            T entity = Activator.CreateInstance<T>();
 
             entity.Name = ReadString("Name");
             ExtraCreate(entity);
@@ -78,8 +82,7 @@ namespace ItemsManager
             _service.Create(entity);
         }
 
-        protected abstract Entity CreateEntity();
-        protected abstract void ExtraCreate(Entity entity);
+        protected abstract void ExtraCreate(T entity);
 
 
         void Delete()
@@ -164,9 +167,9 @@ namespace ItemsManager
             return dateTime;
         }
 
-        int ReadInt(string label)
+        protected int ReadInt(string label, int @default = 0)
         {
-            string input = ReadString(label);
+            string input = ReadString(label, @default.ToString());
 
             int result;
             //tryParse - próbuje przekonwertować string na int, jeśli się nie uda, to nie rzuca wyjątku, tylko zwraca false

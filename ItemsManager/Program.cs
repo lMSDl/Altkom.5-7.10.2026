@@ -1,4 +1,5 @@
 ﻿using ItemsManager;
+using Models;
 
-EntityManager manager = new ProductManager();
+EntityManager<ShoppingItem> manager = new ShoppingItemManager();
 manager.Run();
