@@ -1,6 +1,7 @@
 ﻿using Models;
 using Services.InMemory;
 using Services.Interfaces;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 
 IProductsService service = new ProductsService();
@@ -25,7 +26,7 @@ do
     }
 
     Console.WriteLine();
-    Console.WriteLine("Commands: create, delete, exit");
+    Console.WriteLine("Commands: create, edit, delete, exit");
 
     string input = Console.ReadLine()!; // ! - operator null-forgiving, mówi kompilatorowi, że nie spodziewamy się tu mimo wszystko nulla
 
@@ -33,6 +34,9 @@ do
     {
         case "create":
             Create();
+            break;
+        case "edit":
+            Edit();
             break;
         case "delete":
             Delete();
@@ -49,11 +53,31 @@ do
     Console.ReadKey();
 } while (!exit);
 
+void Edit()
+{
+    int id = ReadInt("Id");
+    Product? entity = service.Read(id);
+    if(entity == null)
+    {
+        Console.WriteLine("Id not found");
+        return;
+    }
+
+    entity = new Product();
+
+    entity.Name = ReadString("Name");
+    entity.Price = ReadFloat("Price");
+    entity.CreatedAt = ReadDate("Created at");
+
+    service.Update(id, entity);
+}
+
 void Create()
 {
     Product entity = new Product();
 
     entity.Name = ReadString("Name");
+    entity.Price = ReadFloat("Price");
     entity.CreatedAt = ReadDate("Created at");
 
     service.Create(entity);
@@ -125,4 +149,50 @@ DateTime ReadDate(string label)
     }
 
     return dateTime;
+}
+
+int ReadInt(string label)
+{
+    string input = ReadString(label);
+
+    int result;
+    //tryParse - próbuje przekonwertować string na int, jeśli się nie uda, to nie rzuca wyjątku, tylko zwraca false
+    //rezultat konwersji jest zwracany przez parametr oznaczony jako out
+    //out - oznacza, że parametr jest przekazywany przez referencję i może być modyfikowany w funkcji
+    bool success = int.TryParse(input, out result);
+
+    if(success)
+        return result;
+
+    Console.WriteLine("Invalid number format");
+    return ReadInt(label);
+}
+
+float ReadFloat(string label)
+{
+    float result;
+    if(!TryReadFloat(label, out result))
+    {
+        return ReadFloat(label);
+    }
+    return result;
+}
+
+//własna implementacja TryPattern - pozwala na obsługę wyjątków w bardziej elegancki sposób
+//zgodnie ze wzorcem funkcja zwraca bool, a wynik konwersji jest zwracany przez parametr out
+bool TryReadFloat(string label, out float result)
+{
+    string input = ReadString(label);
+
+    try
+    {
+        result = float.Parse(input);
+        return true;
+    }
+    catch 
+    {
+        Console.WriteLine("Invalid number format");
+        result = default;
+        return false;
+    }
 }
