@@ -13,7 +13,31 @@ product.Name = "Mikser";
 product.Price = 199.99f;
 service.Create(product);
 
-foreach (var p in service.ReadAll())
+bool exit = false;
+do
 {
-    Console.WriteLine($"Id: {p.Id}, Name: {p.Name}, Price: {p.Price}, CreatedAt: {p.CreatedAt}");
-}
+    Console.Clear();
+    Console.WriteLine("Id - Name - Price");
+    foreach (var p in service.ReadAll())
+    {
+        Console.WriteLine($"{p.Id} - {p.Name} - {p.Price}");
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Commands: exit");
+
+    string input = Console.ReadLine()!; // ! - operator null-forgiving, mówi kompilatorowi, że nie spodziewamy się tu mimo wszystko nulla
+
+    switch (input.ToLower())
+    {
+        case "exit":
+            exit = true;
+            break;
+        default:
+            Console.WriteLine("Unknown command");
+            break;
+    }
+
+    Console.WriteLine("Press any key to continue...");
+    Console.ReadKey();
+} while (!exit);
