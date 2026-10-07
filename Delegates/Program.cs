@@ -15,4 +15,7 @@ eventsExample.OddNumberEvent -= Console.WriteLine;
 //eventsExample.OddNumberEvent = Console.WriteLine;
 
 //eventsExample.Test();
-new LambdaExpressionExample().Test();
+//new LambdaExpressionExample().Test();
+
+
+new LinqExamples().Test();
