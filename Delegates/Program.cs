@@ -14,4 +14,5 @@ eventsExample.OddNumberEvent -= Console.WriteLine;
 //ale nie pozwala na przypisanie (=) nowej metody do delegata (przypisanie do null jest też niedozwolone)
 //eventsExample.OddNumberEvent = Console.WriteLine;
 
-eventsExample.Test();
+//eventsExample.Test();
+new LambdaExpressionExample().Test();
