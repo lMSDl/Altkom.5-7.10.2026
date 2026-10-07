@@ -82,20 +82,27 @@ namespace ItemsManager
             }
 
             IEnumerable<T>? items = null;
+
+            var bytes = File.ReadAllBytes(filePath); //odczytujemy cały plik do tablicy bajtów
             switch (Path.GetExtension(filePath).ToLower()) //Path - fasada do operacji na ścieżkach plików, GetExtension - zwraca rozszerzenie pliku z podanej ścieżki
             {
                 case ".json":
                     //string data = File.ReadAllText(filePath); //odczytujemy cały plik do stringa
-                    var bytes = File.ReadAllBytes(filePath); //odczytujemy cały plik do tablicy bajtów
                     SymmetricEncryption encryption = new SymmetricEncryption();
                     var data = encryption.Decrypt(bytes, "myP@$$w0rd");
                     items = JsonSerializer.Deserialize<IEnumerable<T>>(data, _options);
                     break;
                 case ".xml":
                     {
+                        AsymmetricEncryption asymmetricEncryption = new AsymmetricEncryption();
+                        bytes = asymmetricEncryption.Decrypt(bytes, "CN=localhost"); //deszyfrujemy dane z pliku
+
+
                         XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<T>)); //tworzymy serializer XML dla listy typu T
-                        using FileStream fileStream = new FileStream(filePath, FileMode.Open); //otwieramy plik do odczytu
-                        items = (List<T>?)xmlSerializer.Deserialize(fileStream); //deserializujemy dane XML do listy typu T
+
+                        using MemoryStream stream = new MemoryStream(bytes); //tworzymy strumień pamięci z danych XML
+                        //using FileStream fileStream = new FileStream(filePath, FileMode.Open); //otwieramy plik do odczytu
+                        items = (List<T>?)xmlSerializer.Deserialize(stream); //deserializujemy dane XML do listy typu T
                     }
                     break;
                 default:
@@ -157,8 +164,23 @@ namespace ItemsManager
 
             //File.WriteAllText($"{_filePath}.{extension}", data); //File.WriteAllText - zapisuje string do pliku, jeśli plik istnieje, to go nadpisuje, jeśli nie istnieje, to go tworzy
 
-            SymmetricEncryption encryption = new SymmetricEncryption();
-            byte[] encryptedData = encryption.Encrypt(data, "myP@$$w0rd"); //szyfrujemy dane przed zapisaniem do pliku
+            byte[] encryptedData;
+            switch(extension)
+            {
+                case "json":
+                    SymmetricEncryption encryption = new SymmetricEncryption();
+                    encryptedData = encryption.Encrypt(data, "myP@$$w0rd"); //szyfrujemy dane przed zapisaniem do pliku
+                    break;
+                case "xml":
+                    AsymmetricEncryption asymmetricEncryption = new AsymmetricEncryption();
+                    encryptedData = asymmetricEncryption.Encrypt(data, "CN=localhost"); //szyfrujemy dane przed zapisaniem do pliku
+                    break;
+                default:
+                    Console.WriteLine("Unsupported file format.");
+                    return;
+            }
+
+
             File.WriteAllBytes(_filePath + $".{extension}", encryptedData); //zapisujemy zaszyfrowane dane do pliku
         }
 
