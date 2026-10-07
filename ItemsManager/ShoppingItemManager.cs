@@ -4,6 +4,10 @@ namespace ItemsManager
 {
     internal class ShoppingItemManager : EntityManager<ShoppingItem>
     {
+        public ShoppingItemManager(string filePath) : base(filePath)
+        {
+        }
+
         protected override void ExtraCreate(ShoppingItem entity)
         {
             entity.Quantity = ReadInt("Quantity");

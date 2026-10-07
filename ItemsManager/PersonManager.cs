@@ -4,6 +4,10 @@ namespace ItemsManager
 {
     internal class PersonManager : EntityManager<Person>
     {
+        public PersonManager(string filePath) : base(filePath)
+        {
+        }
+
         protected override void ExtraCreate(Person entity)
         {
             entity.BirthDate = ReadDate("Birth date");

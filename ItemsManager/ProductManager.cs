@@ -4,6 +4,10 @@ namespace ItemsManager
 {
     internal class ProductManager : EntityManager<Product>
     {
+        public ProductManager(string filePath) : base(filePath)
+        {
+        }
+
         protected override void ExtraCreate(Product entity)
         {
             entity.Price = ReadFloat("Price");

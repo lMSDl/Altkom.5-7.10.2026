@@ -13,6 +13,12 @@ namespace ItemsManager
     internal abstract class EntityManager<T> where T : Entity
     {
         protected IEntityService _service = new EntityService();
+        private readonly string _filePath;
+
+        protected EntityManager(string filePath)
+        {
+            _filePath = filePath;
+        }
 
         public virtual void Run()
         {
@@ -78,6 +84,8 @@ namespace ItemsManager
             //JsonSerializer może serializować obiekty bezpośrednio do stringa
             string json = JsonSerializer.Serialize(items, options);
             Console.WriteLine(json);
+
+            SaveToFile(json, "json");
         }
 
         private void ToXml()
@@ -92,6 +100,32 @@ namespace ItemsManager
             var xml = System.Text.Encoding.Default.GetString(xmlArray); //konwertujemy tablicę bajtów na string
 
             Console.WriteLine(xml);
+            SaveToFile(xml, "xml");
+        }
+        private void SaveToFile(string data, string extension)
+        {
+            Console.WriteLine("Save to file? (y/n)");
+            string? input = Console.ReadLine();
+            if (input?.ToLower() != "y")
+            {
+                return; //jeśli użytkownik nie chce zapisać do pliku, to wychodzimy z metody
+            }
+
+            //klasy strumieniowe - klasy opierające swoje działanie na strumieniu byte'ów
+            //wykorzystanie using spowoduje automatyczne wywołanie funkcji Dispose
+            using FileStream fileStream = new FileStream($"{_filePath}.{extension}", FileMode.Create); //FileMode.Create - tworzy nowy plik lub nadpisuje istniejący
+
+            /*var bytes = System.Text.Encoding.Default.GetBytes(data); //konwertujemy string na tablicę bajtów
+            fileStream.Write(bytes);*/
+
+            //klasa pomocnicza do zapisu danych do strumienia obsługująca różne obiekty (w tym string)
+            using StreamWriter streamWriter = new StreamWriter(fileStream); //tworzymy strumień zapisu do pliku
+            streamWriter.Write(data); //zapisujemy dane do pliku
+
+            fileStream.Flush(); //wypychamy dane do pliku
+
+            //fileStream.Close(); //Close() - zamyka strumień i zwalnia zasoby używane przez strumień, w tym przypadku zamyka plik i zwalnia pamięć
+            //fileStream.Dispose(); //Dispose() - zwalnia zasoby używane przez strumień, w tym przypadku zamyka plik i zwalnia pamięć
         }
 
         void Edit()

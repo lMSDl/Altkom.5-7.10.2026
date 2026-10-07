@@ -7,7 +7,7 @@ namespace ItemsManager
         private readonly Action<T> _extraCreate;
         private readonly Action<T, T> _extraEdit;
 
-        public DelegateManager(Action<T> extraCreate, Action<T, T> extraEdit)
+        public DelegateManager(Action<T> extraCreate, Action<T, T> extraEdit, string filePath) : base(filePath)
         {
             _extraCreate = extraCreate;
             _extraEdit = extraEdit;
