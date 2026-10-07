@@ -13,7 +13,7 @@ namespace ItemsManager
     //      Oznacza to, że możemy używać tylko tych typów danych, które są klasami dziedziczącymi po Entity, co pozwala na korzystanie z właściwości i metod zdefiniowanych w klasie Entity w naszej klasie EntityManager.
     internal abstract class EntityManager<T> where T : Entity
     {
-        protected IEntityService _service = new EntityService();
+        protected IEntityAsyncService _service = new EntityAsyncService();
         private readonly string _filePath;
 
         protected EntityManager(string filePath)
