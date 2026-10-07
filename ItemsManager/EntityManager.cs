@@ -1,6 +1,8 @@
 ﻿using Models;
 using Services.InMemory;
 using Services.Interfaces;
+using System.Text.Json;
+using System.Xml.Serialization;
 
 namespace ItemsManager
 {
@@ -24,7 +26,7 @@ namespace ItemsManager
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("Commands: create, edit, delete, exit");
+                Console.WriteLine("Commands: create, edit, delete, json, xml, exit");
 
                 string input = Console.ReadLine()!; // ! - operator null-forgiving, mówi kompilatorowi, że nie spodziewamy się tu mimo wszystko nulla
 
@@ -39,6 +41,12 @@ namespace ItemsManager
                     case "delete":
                         Delete();
                         break;
+                    case "json":
+                        ToJson();
+                        break;
+                    case "xml":
+                        ToXml();
+                        break;
                     case "exit":
                         exit = true;
                         break;
@@ -51,6 +59,39 @@ namespace ItemsManager
                 Console.ReadKey();
             } while (!exit);
 
+        }
+
+        //serializacja - proces przekształcania obiektu w format, który można przechowywać lub przesyłać
+        private void ToJson()
+        {
+            var items = _service.ReadAll().Cast<T>(); // Cast<T>() - rzutowanie elementów kolekcji na typ T, ponieważ ReadAll() zwraca IEnumerable<Entity>, a my chcemy IEnumerable<T>
+
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                WriteIndented = true, // WriteIndented - pozwala na ładne formatowanie JSON-a z wcięciami i nowymi liniami, co ułatwia jego czytanie
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // PropertyNamingPolicy - pozwala na określenie sposobu nazewnictwa właściwości w JSON-ie. W tym przypadku używamy CamelCase, czyli pierwsza litera mała, a kolejne słowa zaczynają się od wielkiej litery
+                IgnoreReadOnlyProperties = true, // IgnoreReadOnlyProperties - pozwala na pominięcie właściwości tylko do odczytu podczas serializacji, co może być przydatne, jeśli chcemy uniknąć niepotrzebnych danych w JSON-ie
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault, // DefaultIgnoreCondition - pozwala na określenie warunku, kiedy właściwości mają być pomijane podczas serializacji. W tym przypadku pomijamy właściwości, które mają wartość domyślną (np. null dla referencji, 0 dla liczb, false dla bool)
+            };
+
+            //JsonSerializer - klasa do serializacji obiektów do formatu JSON
+            //JsonSerializer może serializować obiekty bezpośrednio do stringa
+            string json = JsonSerializer.Serialize(items, options);
+            Console.WriteLine(json);
+        }
+
+        private void ToXml()
+        {
+            var items = _service.ReadAll().Cast<T>().ToList();
+            XmlSerializer xmlSerializer = new XmlSerializer(items.GetType());
+
+            MemoryStream memoryStream = new MemoryStream(); // strumień pamięci do przechowywania danych XML
+            xmlSerializer.Serialize(memoryStream, items);
+
+            var xmlArray = memoryStream.ToArray(); //konwertujemy strumień pamięci na tablicę bajtów
+            var xml = System.Text.Encoding.Default.GetString(xmlArray); //konwertujemy tablicę bajtów na string
+
+            Console.WriteLine(xml);
         }
 
         void Edit()
