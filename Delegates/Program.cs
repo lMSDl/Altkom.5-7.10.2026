@@ -18,4 +18,5 @@ eventsExample.OddNumberEvent -= Console.WriteLine;
 //new LambdaExpressionExample().Test();
 
 
-new LinqExamples().Test();
+//new LinqExamples().Test();
+new LINQ().Exercises();

@@ -25,10 +25,25 @@
         public void Exercises()
         {
             //1.Pobierz nazwiska pracowników z działu IT, którzy zarabiają powyżej średniej pensji wszystkich pracowników, posortowanych malejąco po pensji.
+            var avg = employees.Average(x => x.Salary);
+            var result1 = employees.Where(x => x.Salary > avg).OrderByDescending(x => x.Salary).ToArray();
             //2.Zwróć trzech najstarszych pracowników z działów HR lub Sales, posortowanych rosnąco po imieniu i zwróć tylko pola Name i Age.
+            var result2 = employees.Where(x => x.Department == "HR" || x.Department == "Sales").OrderByDescending(x => x.Age).Take(3).OrderBy(x => x.Name).Select(x => new { x.Name, x.Age }).ToArray();
             //3.Pobierz pracowników młodszych niż 35 lat, których pensja jest większa niż 6000, następnie posortuj ich najpierw po Department, a potem po Salary malejąco.
+            var result3 = employees.Where(x => x.Age < 35 && x.Salary > 6000)
+                                    .OrderBy(x => x.Department)
+                                    .ThenByDescending(x => x.Salary).ToArray();
             //4.Pobierz pracowników, których nazwisko kończy się na „ski” lub „ska”, następnie posortuj ich malejąco po Salary i zwróć tylko Name i Salary.
+            var result4 = employees.Where(l => l.Name.EndsWith("ski") || l.Name.EndsWith("ska"))
+                                            .OrderByDescending(l => l.Salary)
+                                            .Select(l => new { l.Name, l.Salary })
+                                            .ToArray();
             //5.Zwróć listę pracowników, których imię zaczyna się od liter od A do M, posortowanych rosnąco po Age i zwróć tylko Name, Age oraz Department.
+            var result5 = employees.Where(x => x.Name.ToUpper().First() >= 'A')
+                                        .Where(x => x.Name.ToUpper()[0] <= 'M')
+                                        .OrderBy(x => x.Age)
+                                        .Select(x => new { x.Name, x.Age, x.Department })
+                                        .ToArray();
 
 
             Console.ReadLine();
