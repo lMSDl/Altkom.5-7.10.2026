@@ -32,7 +32,7 @@ namespace ItemsManager
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("Commands: create, edit, delete, json, xml, exit");
+                Console.WriteLine("Commands: create, edit, delete, json, xml, import, exit");
 
                 string input = Console.ReadLine()!; // ! - operator null-forgiving, mówi kompilatorowi, że nie spodziewamy się tu mimo wszystko nulla
 
@@ -53,6 +53,9 @@ namespace ItemsManager
                     case "xml":
                         ToXml();
                         break;
+                    case "import":
+                        Import();
+                        break;
                     case "exit":
                         exit = true;
                         break;
@@ -67,22 +70,59 @@ namespace ItemsManager
 
         }
 
+        private void Import()
+        {
+            string filePath = ReadString("Enter file path to import data from");
+            filePath = filePath.Trim('"');
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine("File not found.");
+                return; //jeśli plik nie istnieje, to wychodzimy z metody
+            }
+
+            IEnumerable<T>? items = null;
+            switch (Path.GetExtension(filePath).ToLower()) //Path - fasada do operacji na ścieżkach plików, GetExtension - zwraca rozszerzenie pliku z podanej ścieżki
+            {
+                case ".json":
+                    string data = File.ReadAllText(filePath); //odczytujemy cały plik do stringa
+                    items = JsonSerializer.Deserialize<IEnumerable<T>>(data, _options);
+                    break;
+                case ".xml":
+                    {
+                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<T>)); //tworzymy serializer XML dla listy typu T
+                        using FileStream fileStream = new FileStream(filePath, FileMode.Open); //otwieramy plik do odczytu
+                        items = (List<T>?)xmlSerializer.Deserialize(fileStream); //deserializujemy dane XML do listy typu T
+                    }
+                    break;
+                default:
+                    Console.WriteLine("Unsupported file format.");
+                    return; //jeśli format pliku nie jest obsługiwany, to wychodzimy z metody
+            }
+
+            foreach (var item in items)
+            {
+                _service.Create(item); //dodajemy każdy element do serwisu
+            }
+        }
+        JsonSerializerOptions _options = new JsonSerializerOptions
+        {
+            WriteIndented = true, // WriteIndented - pozwala na ładne formatowanie JSON-a z wcięciami i nowymi liniami, co ułatwia jego czytanie
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // PropertyNamingPolicy - pozwala na określenie sposobu nazewnictwa właściwości w JSON-ie. W tym przypadku używamy CamelCase, czyli pierwsza litera mała, a kolejne słowa zaczynają się od wielkiej litery
+            IgnoreReadOnlyProperties = true, // IgnoreReadOnlyProperties - pozwala na pominięcie właściwości tylko do odczytu podczas serializacji, co może być przydatne, jeśli chcemy uniknąć niepotrzebnych danych w JSON-ie
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault, // DefaultIgnoreCondition - pozwala na określenie warunku, kiedy właściwości mają być pomijane podczas serializacji. W tym przypadku pomijamy właściwości, które mają wartość domyślną (np. null dla referencji, 0 dla liczb, false dla bool)
+        };
+
+
         //serializacja - proces przekształcania obiektu w format, który można przechowywać lub przesyłać
         private void ToJson()
         {
             var items = _service.ReadAll().Cast<T>(); // Cast<T>() - rzutowanie elementów kolekcji na typ T, ponieważ ReadAll() zwraca IEnumerable<Entity>, a my chcemy IEnumerable<T>
 
-            JsonSerializerOptions options = new JsonSerializerOptions
-            {
-                WriteIndented = true, // WriteIndented - pozwala na ładne formatowanie JSON-a z wcięciami i nowymi liniami, co ułatwia jego czytanie
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // PropertyNamingPolicy - pozwala na określenie sposobu nazewnictwa właściwości w JSON-ie. W tym przypadku używamy CamelCase, czyli pierwsza litera mała, a kolejne słowa zaczynają się od wielkiej litery
-                IgnoreReadOnlyProperties = true, // IgnoreReadOnlyProperties - pozwala na pominięcie właściwości tylko do odczytu podczas serializacji, co może być przydatne, jeśli chcemy uniknąć niepotrzebnych danych w JSON-ie
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault, // DefaultIgnoreCondition - pozwala na określenie warunku, kiedy właściwości mają być pomijane podczas serializacji. W tym przypadku pomijamy właściwości, które mają wartość domyślną (np. null dla referencji, 0 dla liczb, false dla bool)
-            };
+            
 
             //JsonSerializer - klasa do serializacji obiektów do formatu JSON
             //JsonSerializer może serializować obiekty bezpośrednio do stringa
-            string json = JsonSerializer.Serialize(items, options);
+            string json = JsonSerializer.Serialize(items, _options);
             Console.WriteLine(json);
 
             SaveToFile(json, "json");

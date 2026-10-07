@@ -6,8 +6,8 @@ namespace Models
     public class Product : Entity
     {
         public float Price { get; set; }
-        [JsonIgnore]
-        [XmlIgnore]
+        //[JsonIgnore]
+        //[XmlIgnore]
         public DateTime CreatedAt { get; set; } = DateTime.Now; //ustalamy wartość domyślną na aktualną datę i czas
 
         public int Quantity { get; set; }

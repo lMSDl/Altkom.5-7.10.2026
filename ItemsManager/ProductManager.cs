@@ -22,14 +22,14 @@ namespace ItemsManager
 
         public override void Run()
         {
-            //inicjalizator obiektowy - pozwala na tworzenie obiektu i inicjalizowanie jego właściwości w jednym kroku
+            /*//inicjalizator obiektowy - pozwala na tworzenie obiektu i inicjalizowanie jego właściwości w jednym kroku
             _service.Create(new Models.Product { Name = "Czajnik", Price = 99.99f });
 
             //bez inicjalizatora obiektowego:
             Product product = new Product();
             product.Name = "Mikser";
             product.Price = 199.99f;
-            _service.Create(product);
+            _service.Create(product);*/
 
             base.Run();
 
