@@ -7,7 +7,7 @@
 
         public override string ToString()
         {
-            return $"{Id} - {Name} - {Price} - {CreatedAt}";
+            return $"{base.ToString()} - {Price} - {CreatedAt}";
         }
     }
 }

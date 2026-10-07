@@ -118,7 +118,7 @@ namespace ItemsManager
         //@ - pozwala używać słów kluczowych jako nazw zmiennych, parametrów itp. - przydatne gdy chcemy zachować czytelność kodu i użyć słowa kluczowego jako nazwy
         //parametr opcjonalny - pozwala na pominięcie argumentu przy wywołaniu funkcji, jeśli nie chcemy go podawać. Musimy podać wartość domyślną dla parametru opcjonalnego.
         //W tym przypadku, jeśli nie podamy wartości dla parametru @default, to zostanie użyta wartość domyślna "" (pusty string)
-        string ReadString(string label, string @default = "")
+        static string ReadString(string label, string @default = "")
         {
             Console.Write($"{label}: ");
             string input = Console.ReadLine()!;
@@ -167,7 +167,7 @@ namespace ItemsManager
             return dateTime;
         }
 
-        protected int ReadInt(string label, int @default = 0)
+        public static int ReadInt(string label, int @default = 0)
         {
             string input = ReadString(label, @default.ToString());
 
