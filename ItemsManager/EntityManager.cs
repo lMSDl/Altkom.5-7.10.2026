@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using ItemsManager.Encryption;
+using Models;
 using Services.InMemory;
 using Services.Interfaces;
 using System.Text.Json;
@@ -84,7 +85,10 @@ namespace ItemsManager
             switch (Path.GetExtension(filePath).ToLower()) //Path - fasada do operacji na ścieżkach plików, GetExtension - zwraca rozszerzenie pliku z podanej ścieżki
             {
                 case ".json":
-                    string data = File.ReadAllText(filePath); //odczytujemy cały plik do stringa
+                    //string data = File.ReadAllText(filePath); //odczytujemy cały plik do stringa
+                    var bytes = File.ReadAllBytes(filePath); //odczytujemy cały plik do tablicy bajtów
+                    SymmetricEncryption encryption = new SymmetricEncryption();
+                    var data = encryption.Decrypt(bytes, "myP@$$w0rd");
                     items = JsonSerializer.Deserialize<IEnumerable<T>>(data, _options);
                     break;
                 case ".xml":
@@ -151,7 +155,11 @@ namespace ItemsManager
                 return; //jeśli użytkownik nie chce zapisać do pliku, to wychodzimy z metody
             }
 
-            File.WriteAllText($"{_filePath}.{extension}", data); //File.WriteAllText - zapisuje string do pliku, jeśli plik istnieje, to go nadpisuje, jeśli nie istnieje, to go tworzy
+            //File.WriteAllText($"{_filePath}.{extension}", data); //File.WriteAllText - zapisuje string do pliku, jeśli plik istnieje, to go nadpisuje, jeśli nie istnieje, to go tworzy
+
+            SymmetricEncryption encryption = new SymmetricEncryption();
+            byte[] encryptedData = encryption.Encrypt(data, "myP@$$w0rd"); //szyfrujemy dane przed zapisaniem do pliku
+            File.WriteAllBytes(_filePath + $".{extension}", encryptedData); //zapisujemy zaszyfrowane dane do pliku
         }
 
         private void SaveToFileUsingStreams(string data, string extension)
