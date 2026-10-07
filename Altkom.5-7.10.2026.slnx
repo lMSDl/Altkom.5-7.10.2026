@@ -8,5 +8,6 @@
   <Project Path="PlayerApp/PlayerApp.csproj" />
   <Project Path="Services.InMemory/Services.InMemory.csproj" />
   <Project Path="Services.Interfaces/Services.Interfaces.csproj" />
+  <Project Path="UserProfileApp/UserProfileApp.csproj" />
   <Project Path="Vectors/Vectors.csproj" />
 </Solution>
