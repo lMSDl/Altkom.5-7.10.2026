@@ -111,6 +111,18 @@ namespace ItemsManager
                 return; //jeśli użytkownik nie chce zapisać do pliku, to wychodzimy z metody
             }
 
+            File.WriteAllText($"{_filePath}.{extension}", data); //File.WriteAllText - zapisuje string do pliku, jeśli plik istnieje, to go nadpisuje, jeśli nie istnieje, to go tworzy
+        }
+
+        private void SaveToFileUsingStreams(string data, string extension)
+        {
+            Console.WriteLine("Save to file? (y/n)");
+            string? input = Console.ReadLine();
+            if (input?.ToLower() != "y")
+            {
+                return; //jeśli użytkownik nie chce zapisać do pliku, to wychodzimy z metody
+            }
+
             //klasy strumieniowe - klasy opierające swoje działanie na strumieniu byte'ów
             //wykorzystanie using spowoduje automatyczne wywołanie funkcji Dispose
             using FileStream fileStream = new FileStream($"{_filePath}.{extension}", FileMode.Create); //FileMode.Create - tworzy nowy plik lub nadpisuje istniejący
